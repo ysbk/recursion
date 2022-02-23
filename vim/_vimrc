@@ -1,0 +1,97 @@
+source $VIMRUNTIME/vimrc_example.vim
+
+set nocompatible
+set enc=utf-8
+set nobackup
+set undodir=~\vimfiles\undodir
+if !isdirectory(&undodir)
+  call mkdir(&undodir, 'p', 0700)
+endif
+
+if has('mouse')
+  if has('gui_running') || (&term =~ 'xterm' && !has('mac'))
+    set mouse=a
+  else
+    set mouse=nvi
+  endif
+endif
+
+set fileencodings=ucs-bom,utf-8,gb18030,latin1
+
+if has('gui_running')
+  set guifont=Courier_New:h18
+endif
+
+set scrolloff=1
+
+let do_syntax_sel_menu = 1
+
+let do_no_lazyload_menus = 1
+
+if !has('gui_running')
+  " 设置文本菜单
+  if has('wildmenu')
+    set wildmenu
+    set cpoptions-=<
+    set wildcharm=<C-Z>
+    nnoremap <F10>      :emenu <C-Z>
+    inoremap <F10> <C-O>:emenu <C-Z>
+  endif
+endif
+
+if exists('g:loaded_minpac')
+  " Minpac is loaded.
+  call minpac#init()
+  call minpac#add('k-takata/minpac', {'type': 'opt'})
+  call minpac#add('tpope/vim-eunuch')
+  call minpac#add('yegappan/mru')
+  call minpac#add('preservim/nerdtree')
+
+  " Other plugins
+  call minpac#add('NLKNguyen/papercolor-theme')
+endif
+
+if has('eval')
+  " Minpac commands
+  command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
+  command! PackClean packadd minpac | source $MYVIMRC | call minpac#clean()
+  command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
+endif
+
+" 如果目标文件已经打开，则把对应的标签页移到最前面
+if v:version >= 800
+  packadd! editexisting
+endif
+
+" 设置快捷键，分割窗口后快速切换窗口
+nnoremap <C-Tab> <C-W>w
+inoremap <C-Tab> <C-O><C-W>w
+nnoremap <C-S-Tab> <C-W>W
+inoremap <C-S-Tab> <C-O><C-W>W
+
+" 停止搜索高亮的键映射
+nnoremap <silent> <F2> :nohlsearch<CR>
+inoremap <silent> <F2> <C-O> :nohlsearch<CR>
+
+" 一直显示行号
+set number
+
+" 把系统寄存器设置为默认寄存器
+" set clipboard=unname
+
+" 设置主题以及修改背景色
+colorscheme PaperColor
+set background=dark
+" 设置真彩色支持
+set termguicolors
+" 总显示状态栏（默认情况下，有时会隐藏）
+set laststatus=2
+" 在状态栏显示最后执行的命令
+set showcmd
+
+" 设置缩进为4个空格
+set shiftwidth=4 softtabstop=4 expandtab
+
+" 解决菜单中文乱码问题，一定要加在最后
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
